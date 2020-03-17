@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'bootstrap4',
     'fruteriaApp',
-    'sweetify',
 ]
 
 MIDDLEWARE = [
