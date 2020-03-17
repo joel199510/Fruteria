@@ -144,34 +144,50 @@ def eliminar_venta(request):
     return redirect('/')
 
 
+
 # VISTA ESTADISTICAS
 @login_required(login_url="login")
 def estadisticas(request):
 
     maximo = Venta.objects.values('id_fruta').annotate(
         sum=Sum('cantidad')).order_by('-sum').first()
-    nombre_fruta_m = Frutas.objects.filter(pk=maximo['id_fruta']).first()
+    
+    if maximo !=None:
 
-    minimo = Venta.objects.values('id_fruta').annotate(
+        nombre_fruta_m = Frutas.objects.filter(pk=maximo['id_fruta']).first()
+
+        minimo = Venta.objects.values('id_fruta').annotate(
         sum=Sum('cantidad')).order_by('sum').first()
-    nombre_fruta_me = Frutas.objects.filter(pk=minimo['id_fruta']).first()
+        
+        nombre_fruta_me = Frutas.objects.filter(pk=minimo['id_fruta']).first()
 
-    total_v = Venta.objects.filter(estado=1).annotate(count=Count('id_venta'))
+        total_v = Venta.objects.filter(estado=1).annotate(count=Count('id_venta'))
 
-    total_re = Venta.objects.filter(estado=1).aggregate(Sum('total'))
+        total_re = Venta.objects.filter(estado=1).aggregate(Sum('total'))
 
-    total_gas = Frutas.objects.filter(estado=1).aggregate(
+        total_gas = Frutas.objects.filter(estado=1).aggregate(
         total=Sum(F('precio_c') * F('cantidad')))
 
-    total_anul = Venta.objects.filter(estado=0).annotate(
+        total_anul = Venta.objects.filter(estado=0).annotate(
         count=Count('id_venta'))
 
-    total_anul_m = Venta.objects.filter(estado=0).aggregate(Sum('total'))
+        total_anul_m = Venta.objects.filter(estado=0).aggregate(Sum('total'))
 
-    ventas = Venta.objects.extra(select={
+        ventas = Venta.objects.extra(select={
         'fecha': "to_char( fecha, 'DD-MM-YYYY')"
-    }).values('fecha').annotate(total=Sum('total')).filter(
+        }).values('fecha').annotate(total=Sum('total')).filter(
         estado=1).order_by('fecha')
+    
+    else:
+        nombre_fruta_m= "",
+        minimo= 0,
+        nombre_fruta_me= "",
+        total_v= 0,
+        total_re= 0,
+        total_gas= 0,
+        total_anul= 0,
+        total_anul_m= 0,
+        ventas= "" 
 
     return render(
         request, "estadisticas.html", {
