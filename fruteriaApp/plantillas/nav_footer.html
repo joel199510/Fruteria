@@ -1,0 +1,191 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es" style="min-height: 100%;
+position: relative;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Icono de la web-->
+    <link rel="icon" type="text/css" href="{% static 'imagenes/logotipo.png' %}" />
+    <!-- FIN -->
+
+    <!-- Color en celulares-->
+    <meta name="theme-color" content="rgb(9,40,69)" />
+    <!-- FIN -->
+
+    <title>{% block tittle %} {% endblock %}</title>
+
+    {# Cargamos la librería #}
+    {% load bootstrap4 %}
+
+    {# CSS Bootstrap #}
+    {% bootstrap_css %}
+
+    {# JS y jQuery Bootstrap #}
+    {% bootstrap_javascript jquery='full' %}
+
+    <script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+
+    <!-- alertas sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+    <script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+    <script src="{% static 'js/sweetalert2.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/sweetalert2.css' %}" />
+    <!-- FIN -->
+
+    <!-- Datatables bootstrap-->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+    <link href="{% static 'css/dataTables.bootstrap4.min.css' %}" rel="stylesheet" />
+    <!-- FIN -->
+
+    <!-- combobuscar bootstrap-->
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/select2-bootstrap4.min.css' %}">
+    <!-- FIN -->
+
+    <!-- JavaScript graficos -->
+    <script src="{% static 'js/highcharts.js' %}"></script>
+    <script src="{% static 'js/exporting.js' %}"></script>
+    <script src="{% static 'js/export-data.js' %}"></script>
+    <!-- FIN -->
+
+</head>
+<style>
+    .navbar {
+        background-color: rgb(3, 20, 36);
+    }
+
+    #navbarDropdownMenuLink {
+        color: white;
+        font-weight: 600;
+        font-size: 1.0rem;
+    }
+</style>
+
+<script>
+
+    var timer = 0;
+
+    function set_interval() {
+
+        timer = setInterval("auto_logout()", 300000);
+
+    }
+
+    function reset_interval() {
+
+        if (timer != 0) {
+            clearInterval(timer);
+            timer = 0;
+            timer = setInterval("auto_logout()", 300000);
+        }
+    }
+
+    function auto_logout() {
+        window.location = "/fruteriaApp/cerrar";
+    }
+
+    function nobackbutton() {
+
+        window.location.hash = "no-back-button";
+
+        window.location.hash = "Again-No-back-button"
+
+        window.onhashchange = function () {
+            window.location.hash = "no-back-button";
+        }
+
+    }
+
+    function start() {
+        set_interval();
+        nobackbutton();
+    }
+</script>
+
+<body onload="start()" onmousemove="reset_interval()" onclick="reset_interval()" onkeypress="reset_interval()"
+    onscroll="reset_interval()">
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/fruteriaApp/index">
+            <img src="{% static 'imagenes/logotipo.png' %}" width="30" height="30" class="d-inline-block align-top"
+                alt="">
+            Fruteria
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false"> Bienvenido {{request.user.first_name}}
+                        {{request.user.last_name}}<b class="caret"></b></a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a id="desconectar" href="{% url 'cerrar' %}" class="dropdown-item"><i
+                                class="fa fa-fw fa-power-off"></i> Desconectarse</a>
+                </li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+
+
+    {% block content %}
+
+    {% endblock %}
+
+
+
+
+    <br><br><br>
+    <br><br><br>
+    <br><br><br>
+
+    <footer id="main">
+        <div class="container">
+            <p>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                Copyright &copy; 2019 -
+                <script>
+                    document.write(new Date().getFullYear());
+                </script> All rights reserved fruteria</a>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p><br>
+        </div>
+
+    </footer>
+
+
+    <style>
+        footer {
+
+            background: rgb(3, 20, 36);
+            width: 100%;
+            height: 100%;
+        }
+
+        footer p {
+            text-align: center;
+            color: #ccc;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('#tbestab_datos').DataTable();
+        });
+    </script>
+
+</body>
+
+
+</html>

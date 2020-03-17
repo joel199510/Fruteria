@@ -1,0 +1,176 @@
+{% extends 'nav_footer.html' %} %}
+
+{% block tittle %} Estadisticas {% endblock %}
+
+{% block content %}
+{% load humanize %}
+{% load static %}
+<br>
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-3 col-sm-12 col-xs-12 col-lg-3">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action  menui" href="/fruteriaApp/index"
+                    aria-controls="frutas">Gestión
+                    de frutas</a>
+                <a class="list-group-item list-group-item-action menui" href="/fruteriaApp/ventas"
+                    aria-controls="ventas">Gestión de
+                    ventas</a>
+                <a class="list-group-item list-group-item-action active menui" href="/fruteriaApp/estadisticas"
+                    aria-controls="estadisticas">Estadísticas</a>
+            </div>
+        </div>
+
+
+        <div class="col-md-9 col-sm-12 col-xs-12 col-lg-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center" id="titulo">Estadísticas</h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <br>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Fruta más vendida</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="text-center"><strong>{{nombre_fruta_m.nombre|title}} con
+                                                        {{maximo.sum}} vendidas</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Fruta menos vendida</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center">
+                                                    <strong>{{nombre_fruta_me.nombre|title}}
+                                                        con {{minimo.sum}} vendidas</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Total de ventas</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center"><strong>{{total_v.count}}</strong>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Total recaudado</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center">
+                                                    <strong>${{total_re.total__sum|intcomma}}</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Total gastado</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center">
+                                                    <strong>${{total_gas.total|intcomma}}</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Total de ventas anuladas</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center"><strong>{{total_anul.count}}</strong>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+                                            <div class="card-header text-center"><strong>
+                                                    <h5>Total anulado</h5>
+                                                </strong></div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center">
+                                                    <strong>${{total_anul_m.total__sum|intcomma}}</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div id='container'
+                                            style='min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto'>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<script type='text/javascript'>
+    var chart = new Highcharts.Chart({
+
+        chart: {
+            renderTo: 'container'
+        },
+        credits: {
+            enabled: false
+        },
+
+        title: {
+            text: 'Total recaudado por fecha'
+        },
+
+        xAxis: {
+            title: {
+                text: 'Fecha'
+            },
+            categories: [{% for i in ventas %}
+                                "{{i.fecha}}",
+                            {% endfor %}],
+                    },
+    yAxis: {
+        title: {
+            text: 'Monto'
+        }
+    },
+    series: [{
+        name: 'Monto',
+        data: [{% for i in ventas %}
+                                {{ i.total }},
+    {% endfor %}],
+                    }]
+                    
+                    });
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,168 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es" style="min-height: 100%;
+position: relative;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Icono de la web-->
+    <link rel="icon" type="text/css" href="{% static 'imagenes/logotipo.png' %}" />
+    <!-- FIN -->
+
+    <!-- Color en celulares-->
+    <meta name="theme-color" content="rgb(9,40,69)" />
+    <!-- FIN -->
+
+    <title>Login</title>
+
+    {# Cargamos la librería #}
+    {% load bootstrap4 %}
+
+    {# CSS Bootstrap #}
+    {% bootstrap_css %}
+
+    {# JS y jQuery Bootstrap #}
+    {% bootstrap_javascript jquery='full' %}
+
+    <link rel="stylesheet" href="{% static 'css/login_style.css' %}" />
+
+    <script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+
+    <!-- alertas sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+    <script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+    <script src="{% static 'js/sweetalert2.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/sweetalert2.css' %}" />
+    <!-- FIN -->
+
+    <script>
+        function nobackbutton() {
+
+            window.location.hash = "no-back-button";
+
+            window.location.hash = "Again-No-back-button" //chrome
+
+            window.onhashchange = function () {
+                window.location.hash = "no-back-button";
+            }
+        }
+    </script>
+
+</head>
+
+<body onload="nobackbutton()">
+
+    <div class="container" style="margin-top:70px;">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Inicio de sesión</h5>
+                        <form class="form-signin" action="" method="POST">
+                            {% csrf_token %}
+                            <div class="form-label-group">
+                                <input type="text" required name="nombre_usuario" id="nombre_usuario"
+                                    class="form-control" placeholder="Nombre de usuario" autofocus value="">
+                            </div>
+
+                            <div class="form-label-group">
+                                <input type="password" required id="password" name="password" class="form-control"
+                                    placeholder="Contraseña" value="">
+                            </div>
+
+                            <br>
+                            <input type="submit" name="submit" value="Ingresar"
+                                class="btn btn-lg btn-block text-uppercase" />
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer id="main">
+        <div class="container">
+            <p>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                Copyright &copy; 2019 -
+                <script>
+                    document.write(new Date().getFullYear());
+                </script> All rights reserved fruteria</a>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p><br>
+        </div>
+
+    </footer>
+
+
+    <style>
+        footer {
+
+            background: rgb(3, 20, 36);
+            width: 100%;
+            height: 100%;
+        }
+
+        footer p {
+            text-align: center;
+            color: #ccc;
+        }
+    </style>
+
+    <script>
+        footer = function () {
+            /*el alto que tiene el navegador*/
+            $alto_navegador = $(window).height();
+            /*el alto que tiene el contenido de la pagina*/
+            $alto_documento = $(document).height();
+            /*  aqui condicionamos si el alto del contenido 
+             *  es mayor que
+             *  el alto del navegador*/
+            if ($alto_documento > $alto_navegador) {
+                /* si es mayor es que tiene un contenido mas 
+                 * largo que el alto del navegador y entonces lo dejamos a relativo*/
+                $("footer").css({
+                    "position": "relative"
+                })
+                console.log("relative");
+            } else {
+                /* si el alto del contenido es menor que el alto del navegador es que
+                 * tenemos espacio vacio y le mandamos abajo*/
+                $("footer").css({
+                    "position": "fixed"
+                })
+                console.log("fixed");
+            }
+
+        }
+        footer();
+    </script>
+
+    {% if messages %}
+    <script>
+        const toast = swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000
+        });
+
+        toast({
+            type: 'error',
+            html: '<strong>{% for message in messages %}<p id="messages">{{message}}</p> {% endfor %}</strong>'
+        })
+    </script>
+    {% endif %}
+
+
+</body>
+
+
+</html>

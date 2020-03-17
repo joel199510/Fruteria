@@ -1,0 +1,428 @@
+{% extends 'nav_footer.html' %} %}
+
+{% block tittle %} Ventas {% endblock %}
+
+{% block content %}
+{% load humanize %}
+{% load static %}
+<br>
+<div class="container">
+  <div class="row">
+
+    <div class="col-md-3 col-sm-12 col-xs-12 col-lg-3">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action  menui" href="/fruteriaApp/index"
+          aria-controls="frutas">Gestión
+          de frutas</a>
+        <a class="list-group-item list-group-item-action active menui" href="/fruteriaApp/ventas"
+          aria-controls="ventas">Gestión de
+          ventas</a>
+        <a class="list-group-item list-group-item-action menui" href="/fruteriaApp/estadisticas"
+          aria-controls="estadisticas">Estadísticas</a>
+      </div>
+    </div>
+
+
+    <div class="col-md-9 col-sm-12 col-xs-12 col-lg-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title text-center" id="titulo">Gestión de ventas</h3>
+        </div>
+        <div class="panel-heading">
+          <a data-toggle="modal" href="" class="btn btn-primary" style="color:white;"
+            data-target="#modal_agregar_venta">
+            Agregar venta</a>
+        </div>
+
+        <div class="panel-body">
+          <div class="panel panel-primary">
+            <div class="panel-body">
+              <br>
+              <div class="table-responsive">
+                <table id="tbestab_datos" name="tbestab_datos" class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Vendedor</th>
+                      <th>Fruta</th>
+                      <th>Total</th>
+                      <th>Cantidad</th>
+                      <th>Fecha</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for i in ventas %}
+                    <tr>
+                      <td>{{forloop.counter}} </td>
+                      <td>{{i.id_usuario.first_name}} {{i.id_usuario.last_name}}</td>
+                      <td>{{i.id_fruta.nombre }}</td>
+                      <td>${{i.total|intcomma }}</td>
+                      <td>{{i.cantidad }}</td>
+                      <td>{{i.fecha|date:'d-m-Y H:i'}}</td>
+                      {% if i.estado == 1 %}
+                      <td>Emitida</td>
+                      {% else %}
+                      <td>Anulada</td>
+                      {% endif %}
+                      <td>
+                        <div class="btn-group">
+                          <span><a class="btn btn-warning identeditar" data-toggle="modal" href="#modal_editar"
+                              data-id="{{i.id_venta}}" data-fruta="{{i.id_fruta_id}}" data-cantidad="{{i.cantidad}}"
+                              data-cantidadf="{{i.id_fruta.cantidad}}"
+                              data-precio_v="{{i.id_fruta.precio_v}}">Editar</a></span>
+                          {% if i.estado == 1 %}
+                          <span><a class="btn btn-danger identeliminar" style="color: white;" data-toggle="modal"
+                              href="#" data-target="#modal_eliminar" data-id="{{i.id_venta}}" data-estado="{{i.estado}}"
+                              data-cantidad="{{i.cantidad}}" data-cantidadf="{{i.id_fruta.cantidad}}"
+                              data-fruta="{{i.id_fruta_id}}">Anular</a></span>
+                          {% else %}
+                          <span><a class="btn btn-success identeliminar" style="color: white;" data-toggle="modal"
+                              href="#" data-target="#modal_eliminar" data-id="{{i.id_venta}}" data-estado="{{i.estado}}"
+                              data-cantidad="{{i.cantidad}}" data-cantidadf="{{i.id_fruta.cantidad}}"
+                              data-fruta="{{i.id_fruta_id}}">Emitir</a></span>
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="modal_agregar_venta" data-backdrop="static" data-keyboard="false" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-book"></i> Agregar venta
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-row">
+
+                <div class="form-group col-md-6">
+                  <strong><label>Fruta</label></strong>
+                  <select class="form-control" name="fruta" id="fruta" required placeholder="Seleccione una fruta">
+                    <option value="">Selecciona una fruta</option>
+                    {% for i in frutas %}
+                    <option value="{{i.id_frutas}}|{{i.precio_v}}|{{i.cantidad}}">{{i.nombre}}
+                      ${{i.precio_v|intcomma}}/por unidad</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class=" form-group col-md-6">
+                  <strong><label>Cantidad disponible</label></strong>
+                  <select class="form-control" name="cantidad" required id="cantidad">
+                    <option value="">Seleccione una cantidad</option>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-12">
+                  <strong><label>Total</label></strong>
+                  <input type="number" disabled name="total_m" required id="total_m" class="form-control" value=""
+                    placeholder="Precio total">
+                  <input type="hidden" name="total" required id="total" value="">
+                  <input type="hidden" name="id_usuario" required id="id_usuario" value="{{request.user.id}}">
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-large btn-block btn-primary" id="submit">Guardar</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="modal_eliminar" data-backdrop="static" data-keyboard="false" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Confirmar cambio de estado</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="modal-footer">
+              <input type="hidden" value="" name="id_venta" id="id_venta" />
+              <input type="hidden" value="" name="estado" id="estado" />
+              <input type="hidden" value="" name="cantidadelim" id="cantidadelim" />
+              <input type="hidden" value="" name="cantidadf" id="cantidadf" />
+              <input type="hidden" value="" name="id_fruta" id="id_fruta" />
+              <div class="col-md-6">
+                <button type="button" class="btn btn-large btn-block btn-success" id="enviar"
+                  name="enviar">Confirmar</button>
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-large btn-block btn-danger" data-dismiss="modal"
+                  aria-label="Close">Cancelar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+    <div class="modal fade" id="modal_editar" data-backdrop="static" data-keyboard="false" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-book"></i> Editar venta
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-row">
+
+                <div class=" form-group col-md-6">
+                  <strong><label>Cantidad disponible</label></strong>
+                  <select class="form-control" name="cantidad_edit" required id="cantidad_edit">
+                    <option value="">Seleccione una cantidad</option>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <strong><label>Total</label></strong>
+                  <input type="number" disabled name="total_m_edit" required id="total_m_edit" class="form-control"
+                    value="" placeholder="Precio total">
+                  <input type="hidden" name="total_edit" required id="total_edit" value="">
+                  <input type="hidden" name="precio_vedit" required id="precio_vedit" value="">
+                  <input type="hidden" name="id_fruta_edit" required id="id_fruta_edit" value="">
+                  <input type="hidden" name="id_ventaedit" required id="id_ventaedit" value="">
+                  <input type="hidden" name="cantidadedit" required id="cantidadedit" value="">
+                  <input type="hidden" name="cantidadfedit" required id="cantidadfedit" value="">
+                  <input type="hidden" name="id_usuario" required id="id_usuario" value="{{request.user.id}}">
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-large btn-block btn-primary" id="submitedit">Guardar</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+
+
+
+<script>
+  $(function () {
+    $("#fruta").each(function () {
+      $(this).select2({
+        dropdownParent: $("#modal_agregar_venta"),
+        theme: "bootstrap4",
+        width: "100%",
+        placeholder: $(this).attr("placeholder"),
+        allowClear: Boolean($(this).data("allow-clear")),
+      });
+    });
+  });
+</script>
+
+<script>
+  $(function () {
+    $("#cantidad").each(function () {
+      $(this).select2({
+        dropdownParent: $("#modal_agregar_venta"),
+        theme: "bootstrap4",
+        width: "100%",
+        placeholder: $(this).attr("placeholder"),
+        allowClear: Boolean($(this).data("allow-clear")),
+      });
+    });
+  });
+</script>
+
+<script>
+  $(function () {
+    $("#cantidad_edit").each(function () {
+      $(this).select2({
+        dropdownParent: $("#modal_editar"),
+        theme: "bootstrap4",
+        width: "100%",
+        placeholder: $(this).attr("placeholder"),
+        allowClear: Boolean($(this).data("allow-clear")),
+      });
+    });
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#fruta').change(function () {
+      var frutas = $('#fruta').val();
+      var fruta = frutas.split("|");
+      var data = "<option value=''>Seleccione una cantidad</option>";
+      if (fruta[2] != "") {
+        for (var i = 1; i <= fruta[2]; i++) {
+          data += "<option value='" + i + "'>" + i + "</option>";
+        }
+
+        $('#cantidad').html(data);
+
+      } else {
+        const toast = swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        toast({
+          type: 'error',
+          html: '<strong>Recuerde que debe elegir una fruta</strong>'
+        })
+      }
+
+    });
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#cantidad').change(function () {
+      var frutas = $('#fruta').val();
+      var fruta = frutas.split("|");
+      var cantidad = $('#cantidad').val();
+      var total = 0;
+      if (cantidad > 0) {
+        total = fruta[1] * cantidad;
+        document.getElementById("total_m").value = total;
+        document.getElementById("total").value = total;
+      } else {
+        const toast = swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        toast({
+          type: 'error',
+          html: '<strong>Recuerde que debe elegir una cantidad</strong>'
+        })
+      }
+
+    });
+  });
+</script>
+
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#cantidad_edit').change(function () {
+      var cantidad = $('#cantidad_edit').val();
+      var precio_vedit = $('#precio_vedit').val();
+      var total = 0;
+      if (cantidad > 0) {
+        total = precio_vedit * cantidad;
+        document.getElementById("total_m_edit").value = total;
+        document.getElementById("total_edit").value = total;
+      } else {
+        const toast = swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        toast({
+          type: 'error',
+          html: '<strong>Recuerde que debe elegir una cantidad</strong>'
+        })
+      }
+
+    });
+  });
+</script>
+
+<script type="text/javascript">
+  $(function () {
+    $(".identeliminar").click(function () {
+      var venta_id = $(this).data('id');
+      var venta_estado = $(this).data('estado');
+      var venta_cantidad = $(this).data('cantidad');
+      var venta_cantidadf = $(this).data('cantidadf');
+      var venta_fruta = $(this).data('fruta');
+
+      $(".modal-footer #id_venta").val(venta_id);
+      $(".modal-footer #estado").val(venta_estado);
+      $(".modal-footer #cantidadelim").val(venta_cantidad);
+      $(".modal-footer #cantidadf").val(venta_cantidadf);
+      $(".modal-footer #id_fruta").val(venta_fruta);
+
+    })
+  });
+</script>
+
+<script type="text/javascript">
+  $(function () {
+    $(".identeditar").click(function () {
+      var venta_id = $(this).data('id');
+      var venta_fruta = $(this).data('fruta');
+      var venta_cantidad = $(this).data('cantidad');
+      var venta_cantidadf = $(this).data('cantidadf');
+      var venta_precio_v = $(this).data('precio_v');
+
+      $(".modal-body #id_ventaedit").val(venta_id);
+      $(".modal-body #id_fruta_edit").val(venta_fruta);
+      $(".modal-body #precio_vedit").val(venta_precio_v);
+      $(".modal-body #cantidadedit").val(venta_cantidad);
+      $(".modal-body #cantidadfedit").val(venta_cantidadf);
+
+      var data = "<option value=''>Seleccione una cantidad</option>";
+
+      for (var i = 1; i <= venta_cantidad + venta_cantidadf; i++) {
+        data += "<option value='" + i + "'>" + i + "</option>";
+      }
+
+      $('.modal-body #cantidad_edit').html(data);
+
+    })
+  });
+</script>
+
+<script src="{% static 'js/script_add_ventas.js' %}"></script>
+<script src="{% static 'js/script_eliminar_venta.js' %}"></script>
+<script src="{% static 'js/script_editar_ventas.js' %}"></script>
+
+{% endblock %}

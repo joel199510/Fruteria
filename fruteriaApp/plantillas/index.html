@@ -1,0 +1,275 @@
+{% extends 'nav_footer.html' %} %}
+
+{% block tittle %} Inicio {% endblock %}
+
+{% block content %}
+{% load humanize %}
+{% load static %}
+<br>
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-3 col-sm-12 col-xs-12 col-lg-3">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active menui" href="/fruteriaApp/index"
+                    aria-controls="frutas">Gestión
+                    de frutas</a>
+                <a class="list-group-item list-group-item-action menui" href="/fruteriaApp/ventas"
+                    aria-controls="ventas">Gestión de
+                    ventas</a>
+                <a class="list-group-item list-group-item-action menui" href="/fruteriaApp/estadisticas"
+                    aria-controls="estadisticas">Estadísticas</a>
+            </div>
+        </div>
+
+
+        <div class="col-md-9 col-sm-12 col-xs-12 col-lg-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center" id="titulo">Gestión de frutas</h3>
+                </div>
+                <div class="panel-heading">
+                    <a data-toggle="modal" href="" class="btn btn-primary" style="color:white;"
+                        data-target="#modal_agregar_frutas"> Agregar fruta</a>
+                </div>
+
+                <div class="panel-body">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <br>
+                            <div class="table-responsive">
+                                <table id="tbestab_datos" name="tbestab_datos" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fruta</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio de venta</th>
+                                            <th>Precio de compra</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in frutas %}
+                                        <tr>
+                                            <td>{% if i.cantidad == 0 %}
+                                                <img src="{% static 'imagenes/alert.png' %}" width="25" height="20"
+                                                    class="img-fluid" alt="">
+                                                {% endif %}
+                                                {{forloop.counter}} </td>
+                                            <td>{{i.nombre}}</td>
+                                            <td>{{i.cantidad}}</td>
+                                            <td>{{i.precio_v|intcomma}}</td>
+                                            <td>{{i.precio_c|intcomma}}</td>
+                                            {% if i.estado == 1 %}
+                                            <td>Activado</td>
+                                            {% else %}
+                                            <td>Desactivado</td>
+                                            {% endif %}
+                                            <td>
+                                                <div class="btn-group">
+                                                    <span><a class="btn btn-warning identeditar" data-toggle="modal"
+                                                            href="#modal_editar" data-id="{{i.id_frutas}}"
+                                                            data-nombre="{{i.nombre}}" data-cantidad="{{i.cantidad}}"
+                                                            data-precio_v="{{i.precio_v}}"
+                                                            data-precio_c="{{i.precio_c}}">Editar</a></span>
+                                                    {% if i.estado == 1 %}
+                                                    <span><a class="btn btn-danger identeliminar" style="color: white;"
+                                                            data-toggle="modal" href="#" data-target="#modal_eliminar"
+                                                            data-id="{{i.id_frutas}}"
+                                                            data-estado="{{i.estado}}">Desactivar</a></span>
+                                                    {% else %}
+                                                    <span><a class="btn btn-success identeliminar" style="color: white;"
+                                                            data-toggle="modal" href="#" data-target="#modal_eliminar"
+                                                            data-id="{{i.id_frutas}}"
+                                                            data-estado="{{i.estado}}">Activar</a></span>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="modal_agregar_frutas" data-backdrop="static" data-keyboard="false" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> Agregar fruta
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="form-row">
+
+                                <div class="form-group col-md-6">
+                                    <strong><label>Nombre</label></strong>
+                                    <input type="text" class="form-control" value="" name="nombre" required id="nombre"
+                                        placeholder="Nombre">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <strong><label>Cantidad</label></strong>
+                                    <input type="number" class="form-control" min="1" value="" name="cantidad" required
+                                        id="cantidad" placeholder="Cantidad">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <strong><label>Precio de venta</label></strong>
+                                    <input type="number" class="form-control" min="1" value="" name="precio_v" required
+                                        id="precio_v" placeholder="Precio de venta">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <strong><label>Precio de compra</label></strong>
+                                    <input type="number" class="form-control" min="1" value="" name="precio_c" required
+                                        id="precio_c" placeholder="Precio de compra">
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-large btn-block btn-primary"
+                                id="submit">Guardar</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="modal_eliminar" data-backdrop="static" data-keyboard="false" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirmar cambio de estado</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="modal-footer">
+                            <input type="hidden" value="" name="id_frutas" id="id_frutas" />
+                            <input type="hidden" value="" name="estado" id="estado" />
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-large btn-block btn-success" id="enviar"
+                                    name="enviar">Confirmar</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-large btn-block btn-danger" data-dismiss="modal"
+                                    aria-label="Close">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="modal_editar" data-backdrop="static" data-keyboard="false" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Editar fruta
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-row">
+
+                        <div class="form-group col-md-6">
+                            <strong><label>Nombre</label></strong>
+                            <input type="text" class="form-control" value="" name="nombre_edit" required
+                                id="nombre_edit" placeholder="Nombre">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <strong><label>Cantidad</label></strong>
+                            <input type="number" class="form-control" min="1" value="" name="cantidad_edit" required
+                                id="cantidad_edit" placeholder="Cantidad">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <strong><label>Precio de venta</label></strong>
+                            <input type="number" class="form-control" min="1" value="" name="precio_v_edit" required
+                                id="precio_v_edit" placeholder="Precio de venta">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <strong><label>Precio de compra</label></strong>
+                            <input type="number" class="form-control" min="1" value="" name="precio_c_edit" required
+                                id="precio_c_edit" placeholder="Precio de compra">
+                        </div>
+                        <input type="hidden" value="" name="id_frutas_edit" id="id_frutas_edit" />
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-large btn-block btn-primary" id="submitedit">Guardar</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".identeliminar").click(function () {
+            var fruta_id = $(this).data('id');
+            var fruta_estado = $(this).data('estado');
+            $(".modal-footer #id_frutas").val(fruta_id);
+            $(".modal-footer #estado").val(fruta_estado);
+        })
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $(".identeditar").click(function () {
+            var fruta_id = $(this).data('id');
+            var fruta_nombre = $(this).data('nombre');
+            var fruta_cantidad = $(this).data('cantidad');
+            var fruta_precio_v = $(this).data('precio_v');
+            var fruta_precio_c = $(this).data('precio_c');
+
+            $(".modal-body #id_frutas_edit").val(fruta_id);
+            $(".modal-body #nombre_edit").val(fruta_nombre);
+            $(".modal-body #cantidad_edit").val(fruta_cantidad);
+            $(".modal-body #precio_v_edit").val(fruta_precio_v);
+            $(".modal-body #precio_c_edit").val(fruta_precio_c);
+
+        })
+    });
+</script>
+
+<script src="{% static 'js/script_add_fruta.js' %}"></script>
+<script src="{% static 'js/script_eliminar_fruta.js' %}"></script>
+<script src="{% static 'js/script_editar_fruta.js' %}"></script>
+
+{% endblock %}
