@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'fruteria',
         'USER': 'postgres',
-        'PASSWORD': '',
+        'PASSWORD': '2421706',
         'HOST': 'localhost',
         'DATABASE_PORT': '5432',
     }
@@ -121,6 +121,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
